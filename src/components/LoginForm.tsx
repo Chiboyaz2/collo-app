@@ -63,33 +63,34 @@ export default function LoginForm() {
     try {
       console.log('Submitting form data:', formData);
 
-      const myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
-      myHeaders.append("Accept", "application/json");
-
-      const raw = JSON.stringify({
-        email: formData.email,
-        password: formData.password,
-        remember: formData.remember
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/login`, {
+        method: 'POST',
+        mode: 'cors', // Explicitly request CORS mode
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          remember: formData.remember
+        }),
+        credentials: 'include' // Include credentials if needed
       });
 
-      const requestOptions = {
-        method: "POST",
-        headers: myHeaders,
-        body: raw,
-      };
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/login`,
-        requestOptions
-      );
+      // Check if the response is OK (status 200-299)
+      if (!response.ok) {
+        // Try to parse error message from response
+        const errorData = await response.json().catch(() => null);
+        throw new Error(
+          errorData?.message || 
+          errorData?.error || 
+          `HTTP error! status: ${response.status}`
+        );
+      }
 
       const result: LoginResponse = await response.json();
       console.log('Server response:', result);
-
-      if (!response.ok) {
-        throw new Error(result.message?.toString() || 'Login failed');
-      }
 
       if (result.status === 'success' && result.message.token) {
         // Store token and admin data in localStorage
@@ -99,7 +100,7 @@ export default function LoginForm() {
         // On successful login, navigate to overview
         router.push('/dashboard');
       } else {
-        throw new Error('Invalid response format');
+        throw new Error(result.message?.toString() || 'Invalid response format');
       }
     } catch (err) {
       console.error('Login error:', err);

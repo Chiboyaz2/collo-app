@@ -18,6 +18,8 @@ const UpdatePasswordPage = () => {
     // Get token from URL params
     const token = searchParams.get('token');
 
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
@@ -47,7 +49,7 @@ const UpdatePasswordPage = () => {
                 redirect: "follow" as RequestRedirect
             };
 
-            const response = await fetch("http://127.0.0.1:8000/api/v1/admin/update-password", requestOptions);
+            const response = await fetch(`${API_BASE_URL}/admin/update-password`, requestOptions);
             const result = await response.json();
 
             if (!response.ok) {
