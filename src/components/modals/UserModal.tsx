@@ -30,6 +30,8 @@ export default function UserModal({ userId, onClose }: ModalProps) {
   const [actionLoading, setActionLoading] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
@@ -40,7 +42,7 @@ export default function UserModal({ userId, onClose }: ModalProps) {
         headers.append("Authorization", `Bearer ${token}`);
 
         const res = await fetch(
-          `http://127.0.0.1:8000/api/v1/admin/customer/${userId}`,
+          `${API_BASE_URL}/admin/customer/${userId}`,
           { method: "GET", headers }
         );
 
