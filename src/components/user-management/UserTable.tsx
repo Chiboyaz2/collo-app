@@ -105,7 +105,7 @@ export default function UserTable({ currentPage, perPage, onPageChange }: UserTa
     }
   };
 
-  if (loading) return <div className="mt-4">Loading users...</div>;
+  if (loading) return <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mt-4"></div>; 
   if (error) return <div className="text-red-500">Error: {error}</div>;
 
   return (
@@ -135,7 +135,7 @@ export default function UserTable({ currentPage, perPage, onPageChange }: UserTa
                 <td className="px-6 py-4 text-sm text-gray-500">{user.phone_number}</td>
                 <td className="px-6 py-4 text-sm">
                   <button 
-                    className="text-blue-600 hover:text-blue-800"
+                    className="text-blue-600 hover:text-blue-800 cursor-pointer"
                     onClick={() => setSelectedUserId(user.id)}
                   >
                     View Details
@@ -163,14 +163,14 @@ export default function UserTable({ currentPage, perPage, onPageChange }: UserTa
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-4 py-2 border rounded disabled:opacity-50"
+            className="px-4 py-2 border rounded disabled:opacity-50 cursor-pointer"
           >
             Previous
           </button>
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === pagination.lastPage}
-            className="px-4 py-2 border rounded disabled:opacity-50"
+            className="px-4 py-2 border rounded disabled:opacity-50 cursor-pointer"
           >
             Next
           </button>

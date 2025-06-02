@@ -48,7 +48,7 @@ export function FilterBar({
 
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-      <div className="w-full sm:w-auto relative z-50">
+      <div className="w-full sm:w-auto relative z-50 ">
         <Select
           value={selectedRoleId === '' ? 'all' : selectedRoleId.toString()}
           onValueChange={(value) => onRoleChange(value === 'all' ? '' : Number(value))}

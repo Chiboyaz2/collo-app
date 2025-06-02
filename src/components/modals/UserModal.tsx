@@ -61,7 +61,7 @@ export default function UserModal({ userId, onClose }: ModalProps) {
     };
 
     fetchUserDetails();
-  }, [userId]);
+  }, [API_BASE_URL, userId]);
 
   const handleDeleteUser = async () => {
     if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
@@ -114,7 +114,7 @@ export default function UserModal({ userId, onClose }: ModalProps) {
       >
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 cursor-pointer"
         >
           ✕
         </button>
@@ -186,7 +186,7 @@ export default function UserModal({ userId, onClose }: ModalProps) {
               <button
                 onClick={handleDeleteUser}
                 disabled={actionLoading}
-                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded disabled:opacity-50"
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded disabled:opacity-50 cursor-pointer"
               >
                 {actionLoading ? "Processing..." : "Delete User"}
               </button>

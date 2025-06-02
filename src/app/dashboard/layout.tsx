@@ -68,9 +68,10 @@ export default function DashboardLayout({
   const baseNavLinks = [
     { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
     { name: 'User Management', href: '/dashboard/user-management', icon: UserCog },
-    { name: 'Financial Overview', href: '/dashboard/financial-overview', icon: PiggyBank },
-    { name: 'System Settings', href: '/dashboard/system-settings', icon: Settings },
-    { name: 'Settings', href: '/dashboard/settings', icon: Sliders },
+    // { name: 'Financial Overview', href: '/dashboard/financial-overview', icon: PiggyBank },
+    { name: 'Transactions', href: '/dashboard/transactions', icon: PiggyBank },
+    // { name: 'System Settings', href: '/dashboard/system-settings', icon: Settings },
+    // { name: 'Settings', href: '/dashboard/settings', icon: Sliders },
   ];
 
   // Conditionally add Staff link if admin role is 1 (super admin)

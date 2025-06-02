@@ -88,7 +88,9 @@ export default function UserMetadata() {
 
       <div className="bg-white p-6 rounded-lg shadow border-l-4 border-indigo-500">
         <h3 className="text-lg font-semibold text-gray-700">Growth Rate</h3>
-        <p className="text-3xl font-bold mt-2">{metadata.growth_rate}%</p>
+        <p className="text-3xl font-bold mt-2">
+        {Number.parseFloat(metadata.growth_rate.toString()).toFixed(3)} %
+          </p>
         <p className="text-sm text-gray-500 mt-1">User base growth</p>
       </div>
     </div>
