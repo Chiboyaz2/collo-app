@@ -96,7 +96,7 @@ const MGRdata = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4  gap-6">
           {/* Total Managers Card */}
           <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
-            <h3 className="text-sm font-semibold text-gray-700 mb-2">Total Managers</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">Total MGR</h3>
             <p className="text-xl font-bold text-blue-600">
               {metadata?.totalMgrs || 0}
             </p>
@@ -105,7 +105,7 @@ const MGRdata = () => {
 
           {/* Average Users Card */}
           <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
-            <h3 className="text-sm font-semibold text-gray-700 mb-2">Average Users per Manager</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">Average Users per MGR</h3>
             <p className="text-xl font-bold text-green-600">
               {metadata?.averageUsersPerMgr || 0}
             </p>

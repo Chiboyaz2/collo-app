@@ -1,6 +1,6 @@
-import React from 'react'
-import { format } from 'date-fns';
+import React from 'react';
 import MGRdata from './MGRdata';
+import MGRTable from './MGRTable';
 
 interface GetMGRProps {
   startDate: Date;
@@ -12,10 +12,10 @@ const GetMGR: React.FC<GetMGRProps> = ({ startDate, endDate }) => {
     <div>
       <MGRdata />
       <div>
-        <p>startDate, endDate </p>
+        <MGRTable startDate={startDate} endDate={endDate} />
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default GetMGR;

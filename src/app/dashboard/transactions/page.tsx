@@ -1,6 +1,6 @@
 "use client"
-import { useState } from 'react';
-import { format, subMonths } from 'date-fns';
+import { useState, useEffect } from 'react';
+import { format, subMonths, parse } from 'date-fns';
 import GetTransactions from '../../../components/transactions/GetTransactions';
 import GetAccounts from '../../../components/transactions/GetAccounts';
 import GetMGR from '../../../components/transactions/GetMGR';
@@ -14,10 +14,23 @@ type DefinedRange = {
 
 type TabType = 'transactions' | 'account' | 'mgr';
 
+const STORAGE_KEY = 'collo-calendar-date-range';
+
+// Helper function to parse date from MM/dd/yyyy format
+const parseDateFromLocalStorage = (dateString: string): Date => {
+  return parse(dateString, 'MM/dd/yyyy', new Date());
+};
+
+// Helper function to format date to MM/dd/yyyy string
+const formatDateForLocalStorage = (date: Date): string => {
+  return format(date, 'MM/dd/yyyy');
+};
+
 export default function Transactions() {
   const today = new Date();
   const oneMonthAgo = subMonths(today, 1);
 
+  // Initialize state with default values
   const [state, setState] = useState<DefinedRange>({
     startDate: oneMonthAgo,
     endDate: today,
@@ -26,6 +39,44 @@ export default function Transactions() {
 
   const [activeTab, setActiveTab] = useState<TabType>('transactions');
 
+  // Load saved date range from localStorage on component mount
+  useEffect(() => {
+    const savedRange = localStorage.getItem(STORAGE_KEY);
+    if (savedRange) {
+      try {
+        const parsedRange = JSON.parse(savedRange);
+        const loadedStartDate = parseDateFromLocalStorage(parsedRange.startDate);
+        const loadedEndDate = parseDateFromLocalStorage(parsedRange.endDate);
+        
+        setState({
+          startDate: loadedStartDate,
+          endDate: loadedEndDate,
+          key: 'selection'
+        });
+
+        // Save the loaded dates back to localStorage to ensure consistent format
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          startDate: formatDateForLocalStorage(loadedStartDate),
+          endDate: formatDateForLocalStorage(loadedEndDate)
+        }));
+
+      } catch (error) {
+        console.error('Failed to parse saved date range', error);
+        // If parsing fails, save the default dates to localStorage
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          startDate: formatDateForLocalStorage(oneMonthAgo),
+          endDate: formatDateForLocalStorage(today)
+        }));
+      }
+    } else {
+      // If no saved range exists, save the default dates
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        startDate: formatDateForLocalStorage(oneMonthAgo),
+        endDate: formatDateForLocalStorage(today)
+      }));
+    }
+  }, []);
+
   const handleDateChange = (field: 'startDate' | 'endDate', value: Date) => {
     const newRange = {
       ...state,
@@ -33,6 +84,12 @@ export default function Transactions() {
     };
     setState(newRange);
     
+    // Save to localStorage whenever dates change
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      startDate: formatDateForLocalStorage(newRange.startDate),
+      endDate: formatDateForLocalStorage(newRange.endDate)
+    }));
+
     console.log('Start Date:', format(newRange.startDate, 'MM/dd/yyyy'));
     console.log('End Date:', format(newRange.endDate, 'MM/dd/yyyy'));
   };
@@ -94,7 +151,7 @@ export default function Transactions() {
           </div>
         </div>
         <div className="mt-2 text-sm text-gray-600">
-          <p>Selected: {format(state.startDate, 'MMM d, yyyy')} - {format(state.endDate, 'MMM d, yyyy')}</p>
+          <p>Selected: {format(state.startDate, 'MM/dd/yyyy')} - {format(state.endDate, 'MM/dd/yyyy')}</p>
         </div>
       </div>
 
