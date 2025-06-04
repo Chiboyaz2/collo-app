@@ -3,6 +3,8 @@ import { Modal } from 'antd';
 import { format, parseISO } from 'date-fns';
 import DefaultersModal, { DefaultersApiResponse } from './DefaultersModal';
 import GetUserModal from "./GetUserModal";
+import ContributionsModal from './ContributionsModal';
+import AllotmentModal from './AllotmentModal';
 
 interface MGR {
   id: string;
@@ -78,6 +80,7 @@ interface Defaulter {
   mgr_cycle_id: string;
   updated_at: string;
   user?: {
+    id: number;
     first_name: string;
     last_name: string;
     phone_number: string;
@@ -105,6 +108,8 @@ const MGRDetailsModal: React.FC<MGRDetailsModalProps> = ({
   const [defaulters, setDefaulters] = useState<Defaulter[]>([]);
   const [isDefaultersModalVisible, setIsDefaultersModalVisible] = useState<boolean>(false);
   const [isGetUserModalOpen, setIsGetUserModalOpen] = useState<boolean>(false);
+  const [isAllotmentModalOpen, setIsAllotmentModalOpen] = useState<boolean>(false);
+  const [isContributionsModalOpen, setIsContributionsModalOpen] = useState<boolean>(false);
 
   const getStatusColor = (status: string): string => {
     switch (status.toLowerCase()) {
@@ -172,7 +177,7 @@ const MGRDetailsModal: React.FC<MGRDetailsModalProps> = ({
     try {
       setDefaultersLoading(true);
       setDefaultersError(null);
-      setIsDefaultersModalVisible(true); // Open modal immediately when fetching starts
+      setIsDefaultersModalVisible(true);
       
       const token = localStorage.getItem('collo-admin-token');
       if (!token) {
@@ -224,116 +229,195 @@ const MGRDetailsModal: React.FC<MGRDetailsModalProps> = ({
     setIsGetUserModalOpen(false);
   };
 
+  const handleAllotmentModalOpen = (): void => {
+    setIsAllotmentModalOpen(true);
+  };
+
+  const handleAllotmentModalClose = (): void => {
+    setIsAllotmentModalOpen(false);
+  };
+
+  const handleContributionsModalOpen = (): void => {
+    setIsContributionsModalOpen(true);
+  };
+
+  const handleContributionsModalClose = (): void => {
+    setIsContributionsModalOpen(false);
+  };
+
   return (
     <>
       <Modal
-        title="MGR Details"
+        title={
+          <div className="font-bold text-lg text-gray-900">
+            {mgr?.name || 'MGR Details'}
+          </div>
+        }
         open={visible}
         onCancel={onCancel}
         footer={null}
-        width={800}
+        width={400}
+        destroyOnHidden
+        styles={{
+          content: {
+            position: 'fixed',
+            top: 0,
+            right: 0,
+            margin: 0,
+            height: '100vh',
+            overflow: 'hidden',
+          },
+          body: {
+            height: 'calc(100vh - 55px)',
+            width: '500px',
+            padding: '16px',
+            paddingBottom: '24px',
+            overflow: 'auto',
+            display: 'flex',
+            flexDirection: 'column'
+          },
+          mask: {
+            backgroundColor: 'rgba(0, 0, 0, 0.65)'
+          }
+        }}
       >
         {mgr && (
-          <div className="space-y-4">
+          <div className="flex flex-col space-y-6">
             {creatorError && (
-              <div className="p-4 mb-4 bg-red-50 border border-red-200 rounded-md">
-                <p className="text-red-600">Error: {creatorError}</p>
+              <div className="p-4 mb-4 bg-red-50 border border-red-200 rounded-md animate-fadeIn">
+                <p className="text-red-600 text-sm">Error: {creatorError}</p>
               </div>
             )}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h4 className="font-medium text-gray-900">Name</h4>
-                <p>{mgr.name}</p>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-900">Status</h4>
-                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(mgr.status)} capitalize`}>
-                  {mgr.status}
-                </span>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-900">Duration</h4>
-                <p className="capitalize">{mgr.duration}</p>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-900">Number of Members</h4>
-                <p>{mgr.number_of_members}</p>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-900">Amount</h4>
-                <p>{mgr.currency} {mgr.amount.toLocaleString()}</p>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-900">Allotment Type</h4>
-                <p className="capitalize">{mgr.allotment_type}</p>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-900">Join Date Deadline</h4>
-                <p>{format(parseISO(mgr.join_date_deadline), 'MMM d, yyyy h:mm a')}</p>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-900">Contribution Start Date</h4>
-                <p>{format(parseISO(mgr.contribution_start_date), 'MMM d, yyyy h:mm a')}</p>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-900">Allocation Date</h4>
-                <p>{format(parseISO(mgr.allocation_date), 'MMM d, yyyy h:mm a')}</p>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-900">Current Cycle</h4>
-                <p>{mgr.current_cycle_number}</p>
+            
+            <div className="flex items-center space-x-2">
+              <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(mgr.status)} capitalize transition-all duration-200`}>
+                {mgr.status}
+              </span>
+              <span className="text-sm text-gray-500">ID: {mgr.id.substring(0, 8)}...</span>
+            </div>
+            
+            <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+              <h3 className="font-medium text-gray-700 mb-3 text-sm uppercase tracking-wide">Basic Information</h3>
+              
+              <div className="space-y-3">
+                <div>
+                  <h4 className="text-xs font-medium text-gray-500">Description</h4>
+                  <p className="text-gray-800 text-sm mt-1">{mgr.desc}</p>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <h4 className="text-xs font-medium text-gray-500">Duration</h4>
+                    <p className="text-gray-800 text-sm capitalize">{mgr.duration}</p>
+                  </div>
+                  
+                  <div>
+                    <h4 className="text-xs font-medium text-gray-500">Members</h4>
+                    <p className="text-gray-800 text-sm">{mgr.number_of_members}</p>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <h4 className="text-xs font-medium text-gray-500">Amount</h4>
+                    <p className="text-gray-800 text-sm font-medium">{mgr.currency} {mgr.amount.toLocaleString()}</p>
+                  </div>
+                  
+                  <div>
+                    <h4 className="text-xs font-medium text-gray-500">Allotment Type</h4>
+                    <p className="text-gray-800 text-sm capitalize">{mgr.allotment_type}</p>
+                  </div>
+                </div>
               </div>
             </div>
-            <div>
-              <h4 className="font-medium text-gray-900">Description</h4>
-              <p className="text-gray-600">{mgr.desc}</p>
+            
+            <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+              <h3 className="font-medium text-gray-700 mb-3 text-sm uppercase tracking-wide">Dates & Timeline</h3>
+              
+              <div className="space-y-3">
+                <div>
+                  <h4 className="text-xs font-medium text-gray-500">Join Deadline</h4>
+                  <p className="text-gray-800 text-sm">{format(parseISO(mgr.join_date_deadline), 'MMM d, yyyy h:mm a')}</p>
+                </div>
+                
+                <div>
+                  <h4 className="text-xs font-medium text-gray-500">Contribution Start</h4>
+                  <p className="text-gray-800 text-sm">{format(parseISO(mgr.contribution_start_date), 'MMM d, yyyy h:mm a')}</p>
+                </div>
+                
+                <div>
+                  <h4 className="text-xs font-medium text-gray-500">Allocation Date</h4>
+                  <p className="text-gray-800 text-sm">{format(parseISO(mgr.allocation_date), 'MMM d, yyyy h:mm a')}</p>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <h4 className="text-xs font-medium text-gray-500">Current Cycle</h4>
+                    <p className="text-gray-800 text-sm font-medium">{mgr.current_cycle_number}</p>
+                  </div>
+                  
+                  <div>
+                    <h4 className="text-xs font-medium text-gray-500">Created</h4>
+                    <p className="text-gray-800 text-sm">{format(parseISO(mgr.created_at), 'MMM d, yyyy')}</p>
+                  </div>
+                </div>
+              </div>
             </div>
+            
             <div>
-              <h4 className="font-medium text-gray-900">Invite Link</h4>
+              <h4 className="text-xs font-medium text-gray-500 mb-1">Invite Link</h4>
               <a 
                 href={mgr.invite_link} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="text-blue-600 hover:underline cursor-pointer"
+                className="text-blue-600 hover:text-blue-800 text-sm truncate block hover:underline transition-colors duration-200"
               >
                 {mgr.invite_link}
               </a>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h4 className="font-medium text-gray-900">Created At</h4>
-                <p>{format(parseISO(mgr.created_at), 'MMM d, yyyy h:mm a')}</p>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-900">Updated At</h4>
-                <p>{format(parseISO(mgr.updated_at), 'MMM d, yyyy h:mm a')}</p>
-              </div>
-            </div>
-            <div className="pt-4 flex space-x-4">
+            
+            <div className="grid md:grid-cols-2 space-x-2 space-y-2 pt-4 sticky bottom-0 bg-white pb-2 mt-auto">
               <button
                 onClick={getCreatorDetails}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
+                className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded cursor-pointer text-sm transition-colors duration-200 flex justify-center items-center"
                 disabled={creatorLoading}
               >
                 {creatorLoading ? 'Loading...' : 'Get Creator Details'}
               </button>
+              
               <button
                 onClick={getDefaulters}
-                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
+                className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded cursor-pointer text-sm transition-colors duration-200 flex justify-center items-center"
                 disabled={defaultersLoading}
               >
                 {defaultersLoading ? 'Loading...' : 'Get Defaulters'}
               </button>
+              
               <button
                 onClick={handleGetUserModalOpen}
-                className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
+                className="bg-purple-500 hover:bg-purple-600 text-white font-medium py-2 px-4 rounded cursor-pointer text-sm transition-colors duration-200 flex justify-center items-center"
               >
                 Get MGR Users
+              </button>
+              
+              <button
+                onClick={handleContributionsModalOpen}
+                className="bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-2 px-4 rounded cursor-pointer text-sm transition-colors duration-200 flex justify-center items-center"
+              >
+                Get Contributions
+              </button>
+              
+              <button
+                onClick={handleAllotmentModalOpen}
+                className="bg-pink-500 hover:bg-pink-600 text-white font-medium py-2 px-4 rounded cursor-pointer text-sm transition-colors duration-200 flex justify-center items-center"
+              >
+                Get Allotment
               </button>
             </div>
           </div>
         )}
       </Modal>
+      
       <DefaultersModal
         visible={isDefaultersModalVisible}
         onCancel={handleDefaultersModalCancel}
@@ -341,9 +425,24 @@ const MGRDetailsModal: React.FC<MGRDetailsModalProps> = ({
         loading={defaultersLoading}
         error={defaultersError}
       />
+      
       <GetUserModal
         open={isGetUserModalOpen}
         onClose={handleGetUserModalClose}
+        mgrId={mgr?.id || ''}
+        mgrName={mgr?.name || ''}
+      />
+      
+      <ContributionsModal
+        open={isContributionsModalOpen}
+        onClose={handleContributionsModalClose}
+        mgrId={mgr?.id || ''}
+        mgrName={mgr?.name || ''}
+      />
+      
+      <AllotmentModal
+        open={isAllotmentModalOpen}
+        onClose={handleAllotmentModalClose}
         mgrId={mgr?.id || ''}
         mgrName={mgr?.name || ''}
       />

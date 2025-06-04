@@ -14,16 +14,22 @@ interface User {
   updated_at: string;
   is_kicked_out: number;
   rollover: number;
+  in_grace_period: number;
+  is_paid: number;
+  user?: {
+    first_name: string;
+    last_name: string;
+    // Add other user properties if needed
+  };
 }
 
 interface GetUserModalProps {
   open: boolean;
   onClose: () => void;
   mgrId: string;
-  mgrName: string; // This is properly defined in the interface
+  mgrName: string;
 }
 
-// Added mgrName to the destructured props here
 const GetUserModal: React.FC<GetUserModalProps> = ({ open, onClose, mgrId, mgrName }) => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
@@ -37,7 +43,6 @@ const GetUserModal: React.FC<GetUserModalProps> = ({ open, onClose, mgrId, mgrNa
         setLoading(true);
         setError(null);
         
-        // Get data from localStorage
         const dateRange = localStorage.getItem('collo-calendar-date-range');
         const token = localStorage.getItem('collo-admin-token');
         
@@ -67,6 +72,13 @@ const GetUserModal: React.FC<GetUserModalProps> = ({ open, onClose, mgrId, mgrNa
         };
 
         const response = await fetch(url, requestOptions);
+        
+        if (response.status === 404) {
+          setUsers([]);
+          setError('No user for this plan');
+          return;
+        }
+
         const result = await response.json();
 
         if (!response.ok) {
@@ -108,7 +120,7 @@ const GetUserModal: React.FC<GetUserModalProps> = ({ open, onClose, mgrId, mgrNa
       />
       
       {/* Modal container */}
-      <div className="relative z-10 w-full max-w-lg bg-white rounded-lg shadow-lg">
+      <div className="relative z-10 w-full max-w-4xl bg-white rounded-lg shadow-lg">
         {/* Modal header */}
         <div className="p-4 border-b">
           <h3 className="text-lg font-semibold">{mgrName} Users</h3>
@@ -128,6 +140,7 @@ const GetUserModal: React.FC<GetUserModalProps> = ({ open, onClose, mgrId, mgrNa
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User ID</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -135,12 +148,17 @@ const GetUserModal: React.FC<GetUserModalProps> = ({ open, onClose, mgrId, mgrNa
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Allocation Paused</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kicked Out</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rollover</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">In Grace Period</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Is Paid</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {users.map((user) => (
                     <tr key={user.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.user_id}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {user.user ? `${user.user.first_name} ${user.user.last_name}` : 'N/A'}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{user.role}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.position}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{getStatusText(user.status)}</td>
@@ -148,6 +166,8 @@ const GetUserModal: React.FC<GetUserModalProps> = ({ open, onClose, mgrId, mgrNa
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{getBooleanText(user.allocation_paused)}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{getBooleanText(user.is_kicked_out)}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{getBooleanText(user.rollover)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{getBooleanText(user.in_grace_period)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{getBooleanText(user.is_paid)}</td>
                     </tr>
                   ))}
                 </tbody>

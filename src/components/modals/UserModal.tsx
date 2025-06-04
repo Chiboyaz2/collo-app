@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useEffect, useState } from "react";
+import MgrPlansModal from "./MgrPlansModal";
+import DefaultsModal from "./DefaultsModal";
 
 type UserDetails = {
   id: number;
@@ -29,6 +32,8 @@ export default function UserModal({ userId, onClose }: ModalProps) {
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [showMgrPlans, setShowMgrPlans] = useState<boolean>(false);
+  const [showDefaults, setShowDefaults] = useState<boolean>(false);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -92,7 +97,6 @@ export default function UserModal({ userId, onClose }: ModalProps) {
       const result = await response.json();
       setSuccessMessage(result.data || "User deleted successfully");
       
-      // Reload the page after 2 seconds to reflect changes
       setTimeout(() => {
         window.location.reload();
       }, 2000);
@@ -109,7 +113,7 @@ export default function UserModal({ userId, onClose }: ModalProps) {
       onClick={onClose}
     >
       <div
-        className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg relative"
+        className="bg-white p-6 shadow-lg w-full max-w-lg fixed top-0 right-0 h-screen md:w-[3500px]"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -175,20 +179,17 @@ export default function UserModal({ userId, onClose }: ModalProps) {
             </div>
 
             <div className="flex justify-end gap-4 mt-6 pt-4 border-t">
-              {/* <button
-                disabled={actionLoading}
-                className={`px-4 py-2 rounded ${userDetails.is_suspended 
-                  ? "bg-green-500 hover:bg-green-600" 
-                  : "bg-yellow-500 hover:bg-yellow-600"} text-white disabled:opacity-50`}
-              >
-                {actionLoading ? "Processing..." : userDetails.is_suspended ? "Unsuspend" : "Suspend"}
-              </button> */}
               <button
-                onClick={handleDeleteUser}
-                disabled={actionLoading}
-                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded disabled:opacity-50 cursor-pointer"
+                onClick={() => setShowMgrPlans(true)}
+                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded cursor-pointer"
               >
-                {actionLoading ? "Processing..." : "Delete User"}
+                Get MGR Plans
+              </button>
+              <button
+                onClick={() => setShowDefaults(true)}
+                className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded cursor-pointer"
+              >
+                See Defaults
               </button>
             </div>
           </div>
@@ -196,6 +197,21 @@ export default function UserModal({ userId, onClose }: ModalProps) {
           <p>No user data found.</p>
         )}
       </div>
+
+      {/* Render the modals conditionally */}
+      {showMgrPlans && (
+        <MgrPlansModal 
+          userId={userId} 
+          onClose={() => setShowMgrPlans(false)} 
+        />
+      )}
+      
+      {showDefaults && (
+        <DefaultsModal 
+          userId={userId} 
+          onClose={() => setShowDefaults(false)} 
+        />
+      )}
     </div>
   );
 }
