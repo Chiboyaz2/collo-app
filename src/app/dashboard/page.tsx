@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { format, subMonths, parse } from 'date-fns';
 import TransactionsGraph from '@/components/transactions/TransactionsGraph';
 import UserMetadata from '@/components/user-management/UserMetadata';
+import ExportData from '@/components/ExportData';
 
 type DefinedRange = {
   startDate: Date;
@@ -87,6 +88,10 @@ export default function OverviewPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
+      <div className='relative '>
+        <ExportData />
+      </div>
+
       <UserMetadata />
       {/* Date Range Inputs */}
       <div className="mb-6 bg-white p-4 rounded-lg shadow-md">
