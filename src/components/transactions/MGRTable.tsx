@@ -218,7 +218,7 @@ const MGRTable: React.FC<MGRTableProps> = ({ startDate, endDate }) => {
 
   return (
     <div className="p-4">
-      <h2 className="text-lg font-semibold mb-2">Merry/Go/Round Lists</h2>
+      <h2 className="text-lg font-semibold mb-2">Merry-Go-Round Lists</h2>
       <p className="text-sm text-gray-600 mb-4">
         Showing data from {format(startDate, 'MMM d, yyyy')} to {format(endDate, 'MMM d, yyyy')}
       </p>
