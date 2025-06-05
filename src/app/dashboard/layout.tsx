@@ -222,26 +222,10 @@ export default function DashboardLayout({
               </h2>
             </div>
 
-            <div className="hidden md:flex items-center bg-gray-100 rounded-lg px-3 py-2 mx-4 flex-1 max-w-md">
-              <Search size={18} className="text-gray-500 mr-2" />
-              <input 
-                type="text" 
-                placeholder="Search..." 
-                className="bg-transparent border-none w-full focus:outline-none text-gray-700"
-              />
-            </div>
+            
 
             <div className="flex items-center space-x-3">
-              <div className="relative">
-                <button className="p-2 rounded-full text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none transition-colors duration-200">
-                  <Bell size={20} />
-                  {notifications > 0 && (
-                    <span className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 bg-[#E53E3E] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                      {notifications}
-                    </span>
-                  )}
-                </button>
-              </div>
+              
 
               <div className="flex items-center">
                 <div className="h-9 w-9 rounded-full bg-[#1A365D] border-2 border-white shadow-sm flex items-center justify-center text-white font-medium">

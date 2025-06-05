@@ -22,6 +22,26 @@ type MgrPlan = {
     email: string;
     phone_number: string;
   };
+  mgr: {
+    id: string;
+    creator_id: number;
+    name: string;
+    desc: string;
+    duration: string;
+    number_of_members: number;
+    amount: number;
+    currency: string;
+    join_date_deadline: string;
+    contribution_start_date: string;
+    current_cycle_number: number;
+    allocation_date: string;
+    theme_color: string;
+    allotment_type: string;
+    invite_link: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+  };
 };
 
 type MgrPlansModalProps = {
@@ -149,11 +169,9 @@ export default function MgrPlansModal({ userId, onClose }: MgrPlansModalProps) {
             <table className="min-w-full bg-white border rounded-lg">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="py-3 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan ID</th>
-                  
-                  
-                  
-                  <th className="py-3 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">MGR ID</th>
+                  {/* <th className="py-3 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan ID</th> */}
+                  <th className="py-3 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">MGR Name</th>
+                  {/* <th className="py-3 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">MGR ID</th> */}
                   <th className="py-3 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                   <th className="py-3 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                   <th className="py-3 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Join Date</th>
@@ -163,8 +181,9 @@ export default function MgrPlansModal({ userId, onClose }: MgrPlansModalProps) {
               <tbody className="divide-y divide-gray-200">
                 {plans.map((plan) => (
                   <tr key={plan.id} className="hover:bg-gray-50">
-                    <td className="py-4 px-4 border-b text-sm text-gray-900">{plan.id}</td>
-                    <td className="py-4 px-4 border-b text-sm text-gray-900">{plan.mgr_id}</td>
+                    {/* <td className="py-4 px-4 border-b text-sm text-gray-900">{plan.id}</td> */}
+                    <td className="py-4 px-4 border-b text-sm text-gray-900">{plan.mgr?.name || "N/A"}</td>
+                    {/* <td className="py-4 px-4 border-b text-sm text-gray-900">{plan.mgr_id}</td> */}
                     <td className="py-4 px-4 border-b text-sm text-gray-900 capitalize">{plan.role}</td>
                     <td className="py-4 px-4 border-b text-sm text-gray-900">
                       <span className={`px-2 py-1 rounded-full text-xs ${

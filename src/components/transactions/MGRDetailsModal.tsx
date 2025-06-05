@@ -382,7 +382,8 @@ const MGRDetailsModal: React.FC<MGRDetailsModalProps> = ({
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={getCreatorDetails}
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded cursor-pointer text-sm transition-colors duration-200 flex justify-center items-center"
+                    className="bg-white hover:bg-blue-600 text-blue-500 hover:text-white border-blue-500 border rounded-lg
+                     font-medium py-2 px-3  cursor-pointer text-sm transition-colors duration-200 flex justify-center items-center"
                     disabled={creatorLoading}
                   >
                     {creatorLoading ? (
@@ -398,7 +399,8 @@ const MGRDetailsModal: React.FC<MGRDetailsModalProps> = ({
                   
                   <button
                     onClick={getDefaulters}
-                    className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded cursor-pointer text-sm transition-colors duration-200 flex justify-center items-center"
+                    className="bg-white hover:bg-blue-600 text-blue-500 hover:text-white border-blue-500 border rounded-lg
+                     font-medium py-2 px-3  cursor-pointer text-sm transition-colors duration-200 flex justify-center items-center"
                     disabled={defaultersLoading}
                   >
                     {defaultersLoading ? (
@@ -414,21 +416,24 @@ const MGRDetailsModal: React.FC<MGRDetailsModalProps> = ({
                   
                   <button
                     onClick={handleGetUserModalOpen}
-                    className="bg-purple-500 hover:bg-purple-600 text-white font-medium py-2 px-4 rounded cursor-pointer text-sm transition-colors duration-200 flex justify-center items-center"
+                    className="bg-white hover:bg-blue-600 text-blue-500 hover:text-white border-blue-500 border rounded-lg
+                     font-medium py-2 px-3  cursor-pointer text-sm transition-colors duration-200 flex justify-center items-center"
                   >
                     Get MGR Users
                   </button>
                   
                   <button
                     onClick={handleContributionsModalOpen}
-                    className="bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-2 px-4 rounded cursor-pointer text-sm transition-colors duration-200 flex justify-center items-center"
+                    className="bg-white hover:bg-blue-600 text-blue-500 hover:text-white border-blue-500 border rounded-lg
+                     font-medium py-2 px-3  cursor-pointer text-sm transition-colors duration-200 flex justify-center items-center"
                   >
                     Get Contributions
                   </button>
                   
                   <button
                     onClick={handleAllotmentModalOpen}
-                    className="bg-pink-500 hover:bg-pink-600 text-white font-medium py-2 px-4 rounded cursor-pointer text-sm transition-colors duration-200 flex justify-center items-center"
+                    className="bg-white hover:bg-blue-600 text-blue-500 hover:text-white border-blue-500 border rounded-lg
+                     font-medium py-2 px-3  cursor-pointer text-sm transition-colors duration-200 flex justify-center items-center"
                   >
                     Get Allotment
                   </button>
