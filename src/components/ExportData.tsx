@@ -88,7 +88,7 @@ const ExportData = () => {
                         onChange={(e) => setSelectedType(e.target.value as ExportType)}
                         className="border border-gray-300 rounded-md px-3 py-2 w-full max-w-60"
                     >
-                        <option value="mgrs">MGRS</option>
+                        <option value="mgrs">MGR</option>
                         <option value="transactions">Transactions</option>
                         <option value="virtual_accounts">Virtual Accounts</option>
                         <option value="bank_accounts">Bank Accounts</option>

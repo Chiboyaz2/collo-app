@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
@@ -36,6 +36,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notifications, setNotifications] = useState(3);
@@ -43,6 +44,13 @@ export default function DashboardLayout({
   const pathname = usePathname();
 
   useEffect(() => {
+    // Check for authentication token
+    const token = localStorage.getItem('collo-admin-token');
+    if (!token) {
+      router.push('/');
+      return;
+    }
+
     // Retrieve admin data from localStorage
     const adminDataString = localStorage.getItem('collo-admin-data');
     if (adminDataString) {
@@ -53,7 +61,7 @@ export default function DashboardLayout({
         console.error('Failed to parse admin data:', error);
       }
     }
-  }, []);
+  }, [router]);
 
   // Close mobile menu on window resize
   useEffect(() => {
@@ -83,6 +91,7 @@ export default function DashboardLayout({
   ];
 
   const handleLogout = () => {
+    localStorage.removeItem('collo-admin-token');
     localStorage.removeItem('collo-admin-data');
     window.location.href = '/';
   };
@@ -105,11 +114,8 @@ export default function DashboardLayout({
       >
         <div className="h-full flex flex-col bg-[#1A365D] text-white shadow-xl">
           <div className="flex items-center justify-between h-16 px-4 border-b border-[#2D4A77]">
-            <div className="flex items-center">
-              <div className="h-8 w-8 rounded-md bg-white flex items-center justify-center text-[#1A365D] font-bold mr-2">
-                C
-              </div>
-              <h1 className="text-xl font-semibold">Collo Admin</h1>
+            <div className="flex items-center p-4">
+              <Image src={Logo} alt='Logo'/>
             </div>
             <button 
               onClick={() => setMobileMenuOpen(false)}

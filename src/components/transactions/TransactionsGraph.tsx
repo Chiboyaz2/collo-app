@@ -22,7 +22,7 @@ const TransactionsGraph: React.FC<TransactionsGraphProps> = ({ startDate, endDat
                 : 'text-gray-500 hover:text-gray-700 cursor-pointer'
             }`}
           >
-            Daily Datas
+            Daily 
           </button>
           <button
             onClick={() => setViewMode('monthly')}
@@ -32,7 +32,7 @@ const TransactionsGraph: React.FC<TransactionsGraphProps> = ({ startDate, endDat
                 : 'text-gray-500 hover:text-gray-700 cursor-pointer'
             }`}
           >
-            Monthly Datas
+            Monthly 
           </button>
         </div>
       </div>
