@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, Check, ArrowRight, AlertCircle } from 'lucide-react';
+import Logo from '../../public/logo white.png'
+import Image from 'next/image';
 
 interface LoginData {
   email: string;
@@ -115,8 +117,8 @@ export default function LoginForm() {
       <div className="w-full max-w-md">
         {/* Logo and Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-white mb-4 shadow-lg">
-            <span className="text-[#1A365D] font-bold text-xl">C</span>
+          <div className="inline-flex items-center justify-center h-40 w-40 ">
+            <Image src={Logo} alt='h-full w-full'/>
           </div>
           <h1 className="text-white text-2xl font-bold">Collo Admin Portal</h1>
           <p className="text-blue-100 mt-2">Log in to manage your platform</p>
@@ -210,7 +212,7 @@ export default function LoginForm() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-[#1A365D] hover:bg-[#2D4A77] text-white py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full bg-[#1A365D] hover:bg-[#2D4A77] text-white py-3 px-4 rounded-lg cursor-pointer flex items-center justify-center transition-colors duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 <span className="flex items-center">
