@@ -70,10 +70,7 @@ export default function DashboardLayout({
   const baseNavLinks = [
     { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
     { name: 'User Management', href: '/dashboard/user-management', icon: UserCog },
-    // { name: 'Financial Overview', href: '/dashboard/financial-overview', icon: PiggyBank },
     { name: 'Transactions', href: '/dashboard/transactions', icon: PiggyBank },
-    // { name: 'System Settings', href: '/dashboard/system-settings', icon: Settings },
-    // { name: 'Settings', href: '/dashboard/settings', icon: Sliders },
   ];
 
   // Conditionally add Staff link if admin role is 1 (super admin)
@@ -84,6 +81,11 @@ export default function DashboardLayout({
     ] : []),
     ...baseNavLinks.slice(1) // Rest of the links
   ];
+
+  const handleLogout = () => {
+    localStorage.removeItem('collo-admin-data');
+    window.location.href = '/';
+  };
 
   return (
     <div className="flex h-screen bg-[#F7FAFC]">
@@ -142,7 +144,10 @@ export default function DashboardLayout({
           </div>
           
           <div className="p-4 border-t border-[#2D4A77]">
-            <button className="flex w-full items-center px-4 py-2 text-gray-300 hover:text-white hover:bg-[#2D4A77] rounded-lg transition-colors duration-200">
+            <button 
+              onClick={handleLogout}
+              className="flex w-full items-center px-4 py-2 text-gray-300 hover:text-white hover:bg-[#2D4A77] rounded-lg transition-colors duration-200"
+            >
               <LogOut size={20} className="mr-3" />
               <span>Logout</span>
             </button>
@@ -190,6 +195,15 @@ export default function DashboardLayout({
                 </Link>
               );
             })}
+            <Link
+              href="#"
+              onClick={handleLogout}
+              className={`flex items-center ${sidebarOpen ? 'px-4' : 'justify-center'} py-3 rounded-lg transition-colors duration-200 group text-gray-300 hover:bg-[#2D4A77] hover:text-white`}
+              title={!sidebarOpen ? "Logout" : undefined}
+            >
+              <LogOut size={20} className={sidebarOpen ? 'text-gray-400 group-hover:text-white' : ''} />
+              {sidebarOpen && <span className="ml-3">Logout</span>}
+            </Link>
           </nav>
         </div>
 
@@ -221,11 +235,7 @@ export default function DashboardLayout({
               </h2>
             </div>
 
-            
-
             <div className="flex items-center space-x-3">
-              
-
               <div className="flex items-center">
                 <div className="h-9 w-9 rounded-full bg-[#1A365D] border-2 border-white shadow-sm flex items-center justify-center text-white font-medium">
                   {adminData?.first_name?.[0] || 'A'}
