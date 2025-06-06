@@ -19,6 +19,8 @@ import {
   Menu,
   X
 } from 'lucide-react';
+import Logo from '../../../public/logo white.png'
+import Image from 'next/image';
 
 type AdminData = {
   id: number;
@@ -156,11 +158,8 @@ export default function DashboardLayout({
       >
         <div className="flex items-center h-16 px-4 border-b border-[#2D4A77]">
           {sidebarOpen ? (
-            <div className="flex items-center">
-              <div className="h-8 w-8 rounded-md bg-white flex items-center justify-center text-[#1A365D] font-bold mr-2">
-                C
-              </div>
-              <h1 className="text-xl font-semibold">Collo Admin</h1>
+            <div className="flex items-center p-4">
+              <Image src={Logo} alt='Logo'/>
             </div>
           ) : (
             <div className="h-8 w-8 mx-auto rounded-md bg-white flex items-center justify-center text-[#1A365D] font-bold">

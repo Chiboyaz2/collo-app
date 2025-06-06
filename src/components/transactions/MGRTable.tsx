@@ -184,7 +184,6 @@ const MGRTable: React.FC<MGRTableProps> = ({ startDate, endDate }) => {
 
   const statusOptions = [
     { value: 'all', label: 'All Statuses' },
-    { value: 'active', label: 'Active' },
     { value: 'cancelled', label: 'Cancelled' },
     { value: 'pending', label: 'Pending' },
     { value: 'completed', label: 'Completed' },

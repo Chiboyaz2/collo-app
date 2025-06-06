@@ -1,7 +1,17 @@
 import React, { useState } from 'react';
 
+type ExportType = 
+    'mgrs' | 
+    'transactions' | 
+    'virtual_accounts' | 
+    'bank_accounts' | 
+    'contributions' | 
+    'allotments' | 
+    'users_mgrs' | 
+    'users';
+
 const ExportData = () => {
-    const [selectedType, setSelectedType] = useState('mgrs');
+    const [selectedType, setSelectedType] = useState<ExportType>('mgrs');
     const [isLoading, setIsLoading] = useState(false);
 
     const handleDownload = async () => {
@@ -20,7 +30,7 @@ const ExportData = () => {
             const requestOptions: RequestInit = {
                 method: "GET",
                 headers: myHeaders,
-                redirect: "follow"
+                redirect: "follow" as RequestRedirect
             };
 
             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -43,7 +53,7 @@ const ExportData = () => {
             const link = document.createElement('a');
             link.href = downloadUrl;
             
-            // Set the file name
+            // Set the file name with current date
             const fileName = `export-${selectedType}-${new Date().toISOString().slice(0, 10)}.csv`;
             link.setAttribute('download', fileName);
             
@@ -75,12 +85,17 @@ const ExportData = () => {
                     <select
                         id="exportType"
                         value={selectedType}
-                        onChange={(e) => setSelectedType(e.target.value)}
+                        onChange={(e) => setSelectedType(e.target.value as ExportType)}
                         className="border border-gray-300 rounded-md px-3 py-2 w-full max-w-60"
                     >
                         <option value="mgrs">MGRS</option>
-                        {/* Add more options here as needed */}
-                        {/* <option value="other">Other Type</option> */}
+                        <option value="transactions">Transactions</option>
+                        <option value="virtual_accounts">Virtual Accounts</option>
+                        <option value="bank_accounts">Bank Accounts</option>
+                        <option value="contributions">Contributions</option>
+                        <option value="allotments">Allotments</option>
+                        <option value="users_mgrs">Users MGRS</option>
+                        <option value="users">Users</option>
                     </select>
                 </div>
                 
@@ -93,7 +108,6 @@ const ExportData = () => {
                     {isLoading ? 'Downloading...' : 'Download Export'}
                 </button>
             </div>
-            
         </div>
     );
 };
