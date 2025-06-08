@@ -102,6 +102,14 @@ const MGRTable: React.FC<MGRTableProps> = ({ startDate, endDate }) => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [creator, setCreator] = useState<Creator | null>(null);
   const [isCreatorModalVisible, setIsCreatorModalVisible] = useState<boolean>(false);
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    last_page: 1,
+    per_page: 3,
+    total: 0,
+    from: 0,
+    to: 0
+  });
 
   useEffect(() => {
     const fetchMGRData = async () => {
@@ -122,7 +130,7 @@ const MGRTable: React.FC<MGRTableProps> = ({ startDate, endDate }) => {
           throw new Error('API base URL not configured');
         }
 
-        let url = `${apiBaseUrl}/admin/finance/mgr?start_date=${formattedStartDate}&end_date=${formattedEndDate}&perPage=5`;
+        let url = `${apiBaseUrl}/admin/finance/mgr?start_date=${formattedStartDate}&end_date=${formattedEndDate}&perPage=3&page=${pagination.current_page}`;
         
         if (selectedStatus !== 'all') {
           url += `&status=${selectedStatus}`;
@@ -140,6 +148,14 @@ const MGRTable: React.FC<MGRTableProps> = ({ startDate, endDate }) => {
 
         const result: ApiResponse = await response.json();
         setMgrData(result.message.data);
+        setPagination({
+          current_page: result.message.current_page,
+          last_page: result.message.last_page,
+          per_page: result.message.per_page,
+          total: result.message.total,
+          from: result.message.from,
+          to: result.message.to
+        });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An unknown error occurred');
       } finally {
@@ -148,7 +164,7 @@ const MGRTable: React.FC<MGRTableProps> = ({ startDate, endDate }) => {
     };
 
     fetchMGRData();
-  }, [startDate, endDate, selectedStatus]);
+  }, [startDate, endDate, selectedStatus, pagination.current_page]);
 
   const showModal = (mgr: MGR) => {
     setSelectedMgr(mgr);
@@ -191,6 +207,90 @@ const MGRTable: React.FC<MGRTableProps> = ({ startDate, endDate }) => {
     { value: 'started', label: 'Started' }
   ];
 
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= pagination.last_page) {
+      setPagination(prev => ({ ...prev, current_page: page }));
+    }
+  };
+
+  const renderPagination = () => {
+    const pages = [];
+    const maxVisiblePages = 5;
+    let startPage = 1;
+    let endPage = pagination.last_page;
+
+    if (pagination.last_page > maxVisiblePages) {
+      const half = Math.floor(maxVisiblePages / 2);
+      startPage = Math.max(pagination.current_page - half, 1);
+      endPage = startPage + maxVisiblePages - 1;
+
+      if (endPage > pagination.last_page) {
+        endPage = pagination.last_page;
+        startPage = endPage - maxVisiblePages + 1;
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`px-3 py-1 rounded-md ${pagination.current_page === i ? 'bg-[#470B96] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    return (
+      <div className="flex items-center justify-between mt-4">
+        <div className="text-sm text-gray-700">
+          Showing <span className="font-medium">{pagination.from}</span> to <span className="font-medium">{pagination.to}</span> of{' '}
+          <span className="font-medium">{pagination.total}</span> results
+        </div>
+        <div className="flex space-x-1">
+          <button
+            onClick={() => handlePageChange(pagination.current_page - 1)}
+            disabled={pagination.current_page === 1}
+            className="px-3 py-1 rounded-md bg-gray-200 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300"
+          >
+            Previous
+          </button>
+          {startPage > 1 && (
+            <>
+              <button
+                onClick={() => handlePageChange(1)}
+                className={`px-3 py-1 rounded-md ${1 === pagination.current_page ? 'bg-[#470B96] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+              >
+                1
+              </button>
+              {startPage > 2 && <span className="px-2 py-1">...</span>}
+            </>
+          )}
+          {pages}
+          {endPage < pagination.last_page && (
+            <>
+              {endPage < pagination.last_page - 1 && <span className="px-2 py-1">...</span>}
+              <button
+                onClick={() => handlePageChange(pagination.last_page)}
+                className={`px-3 py-1 rounded-md ${pagination.last_page === pagination.current_page ? 'bg-[#470B96] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+              >
+                {pagination.last_page}
+              </button>
+            </>
+          )}
+          <button
+            onClick={() => handlePageChange(pagination.current_page + 1)}
+            disabled={pagination.current_page === pagination.last_page}
+            className="px-3 py-1 rounded-md bg-gray-200 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   if (loading) {
     return (
       <div className="p-4">
@@ -231,7 +331,10 @@ const MGRTable: React.FC<MGRTableProps> = ({ startDate, endDate }) => {
           id="status-filter"
           className="block w-60 p-3 border text-base border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
           value={selectedStatus}
-          onChange={(e) => setSelectedStatus(e.target.value)}
+          onChange={(e) => {
+            setSelectedStatus(e.target.value);
+            setPagination(prev => ({ ...prev, current_page: 1 }));
+          }}
         >
           {statusOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -271,7 +374,7 @@ const MGRTable: React.FC<MGRTableProps> = ({ startDate, endDate }) => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <button
                     onClick={() => showModal(mgr)}
-                    className="text-indigo-600 hover:text-indigo-900 cursor-pointer"
+                    className="text-[#470B96] hover:text-[#470B96]/85 cursor-pointer"
                   >
                     View Details
                   </button>
@@ -281,6 +384,9 @@ const MGRTable: React.FC<MGRTableProps> = ({ startDate, endDate }) => {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
+      {renderPagination()}
 
       {/* MGR Details Modal */}
       <MGRDetailsModal

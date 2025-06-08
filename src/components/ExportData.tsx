@@ -103,7 +103,7 @@ const ExportData = () => {
                     onClick={handleDownload}
                     disabled={isLoading}
                     className={`px-4 py-2 rounded-md text-white cursor-pointer ${isLoading ? 'bg-gray-400' : 
-                        'bg-blue-600 hover:bg-blue-700'}`}
+                        'bg-[#470B96] hover:bg-[#470B96]/85'}`}
                 >
                     {isLoading ? 'Downloading...' : 'Download Export'}
                 </button>

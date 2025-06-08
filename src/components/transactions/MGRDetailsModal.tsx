@@ -394,7 +394,7 @@ const MGRDetailsModal: React.FC<MGRDetailsModalProps> = ({
                         </svg>
                         Loading...
                       </>
-                    ) : 'Get Creator Details'}
+                    ) : 'Get Admins Details'}
                   </button>
                   
                   <button
@@ -419,7 +419,7 @@ const MGRDetailsModal: React.FC<MGRDetailsModalProps> = ({
                     className="bg-white hover:bg-blue-600 text-blue-500 hover:text-white border-blue-500 border rounded-lg
                      font-medium py-2 px-3  cursor-pointer text-sm transition-colors duration-200 flex justify-center items-center"
                   >
-                    Get MGR Users
+                    Get MGR Members
                   </button>
                   
                   <button

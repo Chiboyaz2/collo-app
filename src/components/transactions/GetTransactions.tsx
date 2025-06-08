@@ -104,7 +104,7 @@ const GetTransactions: React.FC<GetTransactionsProps> = ({ startDate, endDate })
         <button
           key={1}
           onClick={() => handlePageChange(1)}
-          className={`px-4 py-2 rounded-md ${currentPage === 1 ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'}`}
+          className={`px-4 py-2 rounded-md ${currentPage === 1 ? 'bg-[#470B96] text-white' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'}`}
         >
           1
         </button>
@@ -123,7 +123,7 @@ const GetTransactions: React.FC<GetTransactionsProps> = ({ startDate, endDate })
         <button
           key={i}
           onClick={() => handlePageChange(i)}
-          className={`px-4 py-2 rounded-md ${currentPage === i ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'}`}
+          className={`px-4 py-2 rounded-md ${currentPage === i ? 'bg-[#470B96] text-white' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'}`}
         >
           {i}
         </button>
@@ -258,7 +258,7 @@ const GetTransactions: React.FC<GetTransactionsProps> = ({ startDate, endDate })
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             <button
                               onClick={() => openModal(transaction)}
-                              className="text-blue-600 hover:text-blue-900 font-medium hover:underline focus:outline-none cursor-pointer"
+                              className="text-[#470B96] hover:text-[#470B96]/85 font-medium hover:underline focus:outline-none cursor-pointer"
                             >
                               View Details
                             </button>

@@ -113,7 +113,7 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#1A365D] to-[#2D4A77] p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#470B96] to-[#470B96]/70 p-4">
       <div className="w-full max-w-md">
         {/* Logo and Header */}
         <div className="text-center mb-8">
@@ -127,7 +127,7 @@ export default function LoginForm() {
         {/* Login Card */}
         <div className="bg-white rounded-xl shadow-2xl overflow-hidden transition-all duration-300 transform hover:shadow-xl">
           {/* Card Header */}
-          <div className="bg-[#1A365D] p-4">
+          <div className="bg-[#470B96] p-4">
             <h2 className="text-white text-lg font-medium">Administrator Access</h2>
           </div>
 
@@ -190,7 +190,7 @@ export default function LoginForm() {
                 <div
                   className={`mr-3 h-5 w-5 rounded border ${
                     formData.remember
-                      ? 'bg-[#38A169] border-[#38A169]'
+                      ? 'bg-[#470B96] border-[#470B96]'
                       : 'border-gray-300'
                   } flex items-center justify-center transition-colors duration-200`}
                 >
@@ -212,7 +212,7 @@ export default function LoginForm() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-[#1A365D] hover:bg-[#2D4A77] text-white py-3 px-4 rounded-lg cursor-pointer flex items-center justify-center transition-colors duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full bg-[#470B96] hover:bg-[#470B96]/85 text-white py-3 px-4 rounded-lg cursor-pointer flex items-center justify-center transition-colors duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 <span className="flex items-center">

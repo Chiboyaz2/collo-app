@@ -135,7 +135,7 @@ export default function UserTable({ currentPage, perPage, onPageChange }: UserTa
                 <td className="px-6 py-4 text-sm text-gray-500">{user.phone_number}</td>
                 <td className="px-6 py-4 text-sm">
                   <button 
-                    className="text-blue-600 hover:text-blue-800 cursor-pointer"
+                    className="text-[#470B96] hover:text-[#470B96]/80 cursor-pointer"
                     onClick={() => setSelectedUserId(user.id)}
                   >
                     View Details

@@ -101,7 +101,7 @@ export default function DashboardLayout({
       {/* Mobile menu overlay */}
       {mobileMenuOpen && (
         <div 
-          className="fixed inset-0 bg-gray-800 bg-opacity-75 z-40 lg:hidden"
+          className="fixed inset-0 bg-gray-200/50 bg-opacity-75 z-40 lg:hidden"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}
@@ -112,14 +112,14 @@ export default function DashboardLayout({
           mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="h-full flex flex-col bg-[#1A365D] text-white shadow-xl">
+        <div className="h-full flex flex-col bg-[#470B96]/90 text-white shadow-xl ">
           <div className="flex items-center justify-between h-16 px-4 border-b border-[#2D4A77]">
             <div className="flex items-center p-4">
               <Image src={Logo} alt='Logo'/>
             </div>
             <button 
               onClick={() => setMobileMenuOpen(false)}
-              className="p-2 rounded-md hover:bg-[#2D4A77] focus:outline-none"
+              className="p-2 rounded-md hover:bg-[#470B96] focus:outline-none"
             >
               <X size={20} />
             </button>
@@ -137,8 +137,8 @@ export default function DashboardLayout({
                     href={link.href}
                     className={`flex items-center px-4 py-3 rounded-lg transition-colors duration-200 group ${
                       isActive 
-                        ? 'bg-[#2D4A77] text-white' 
-                        : 'text-gray-300 hover:bg-[#2D4A77] hover:text-white'
+                        ? 'bg-[#470B96] text-white' 
+                        : 'text-gray-300 hover:bg-[#470B96]/80 hover:text-white'
                     }`}
                   >
                     <Icon size={20} className={`mr-3 ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-white'}`} />
@@ -163,11 +163,11 @@ export default function DashboardLayout({
 
       {/* Sidebar - Desktop */}
       <div 
-        className={`hidden lg:flex flex-col bg-[#1A365D] text-white transition-all duration-300 ease-in-out ${
+        className={`hidden lg:flex flex-col bg-[#470B96]/90 text-white transition-all duration-300 ease-in-out ${
           sidebarOpen ? 'w-64' : 'w-20'
         }`}
       >
-        <div className="flex items-center h-16 px-4 border-b border-[#2D4A77]">
+        <div className="flex items-center h-16 px-4 border-b border-[#470B96]/90">
           {sidebarOpen ? (
             <div className="flex items-center p-4">
               <Image src={Logo} alt='Logo'/>
@@ -191,8 +191,8 @@ export default function DashboardLayout({
                   href={link.href}
                   className={`flex items-center ${sidebarOpen ? 'px-4' : 'justify-center'} py-3 rounded-lg transition-colors duration-200 group ${
                     isActive 
-                      ? 'bg-[#2D4A77] text-white' 
-                      : 'text-gray-300 hover:bg-[#2D4A77] hover:text-white'
+                      ? 'bg-[#470B96] text-white' 
+                      : 'text-gray-300 hover:bg-[#470B96] hover:text-white'
                   }`}
                   title={!sidebarOpen ? link.name : undefined}
                 >
@@ -204,7 +204,7 @@ export default function DashboardLayout({
             <Link
               href="#"
               onClick={handleLogout}
-              className={`flex items-center ${sidebarOpen ? 'px-4' : 'justify-center'} py-3 rounded-lg transition-colors duration-200 group text-gray-300 hover:bg-[#2D4A77] hover:text-white`}
+              className={`flex items-center ${sidebarOpen ? 'px-4' : 'justify-center'} py-3 rounded-lg transition-colors duration-200 group text-gray-300 hover:bg-[#470B96] hover:text-white`}
               title={!sidebarOpen ? "Logout" : undefined}
             >
               <LogOut size={20} className={sidebarOpen ? 'text-gray-400 group-hover:text-white' : ''} />
@@ -216,7 +216,7 @@ export default function DashboardLayout({
         <div className="p-4 flex justify-center border-t border-[#2D4A77]">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 rounded-md hover:bg-[#2D4A77] focus:outline-none transition-colors duration-200"
+            className="p-2 rounded-md hover:bg-[#470B96] focus:outline-none transition-colors duration-200"
             title={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
           >
             {sidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
@@ -243,7 +243,7 @@ export default function DashboardLayout({
 
             <div className="flex items-center space-x-3">
               <div className="flex items-center">
-                <div className="h-9 w-9 rounded-full bg-[#1A365D] border-2 border-white shadow-sm flex items-center justify-center text-white font-medium">
+                <div className="h-9 w-9 rounded-full bg-[#470B96]/95 border-2 border-white shadow-sm flex items-center justify-center text-white font-medium">
                   {adminData?.first_name?.[0] || 'A'}
                 </div>
                 <div className="ml-2 hidden md:block">

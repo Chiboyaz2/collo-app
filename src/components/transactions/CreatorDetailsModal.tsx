@@ -56,7 +56,7 @@ const CreatorDetailsModal: React.FC<CreatorDetailsModalProps> = ({ visible, onCa
   return (
     <div className="fixed  z-[2000] flex items-center justify-center p-4">
       <Modal
-        title="Creator Details"
+        title="Admin Details"
         open={visible}
         onCancel={onCancel}
         footer={null}
