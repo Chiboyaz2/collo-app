@@ -107,7 +107,7 @@ const MGRdata = () => {
           <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
             <h3 className="text-sm font-semibold text-gray-700 mb-2">Average Users per MGR</h3>
             <p className="text-xl font-bold text-green-600">
-              {metadata?.averageUsersPerMgr || 0}
+              {(metadata?.averageUsersPerMgr || 0).toFixed(2)}
             </p>
             <p className="text-sm text-gray-500 mt-2">Average user count per manager</p>
           </div>

@@ -26,7 +26,8 @@ interface MGR {
 
 interface ApiResponse {
   status: string;
-  message: {
+  message: string;
+  data: {
     current_page: number;
     data: MGR[];
     first_page_url: string;
@@ -45,7 +46,6 @@ interface ApiResponse {
     to: number;
     total: number;
   };
-  data: string;
 }
 
 interface Creator {
@@ -105,15 +105,29 @@ const MGRTable: React.FC<MGRTableProps> = ({ startDate, endDate }) => {
   const [pagination, setPagination] = useState({
     current_page: 1,
     last_page: 1,
-    per_page: 3,
+    per_page: 10,
     total: 0,
     from: 0,
     to: 0
   });
 
+  const buildApiUrl = () => {
+    const formattedStartDate = format(startDate, 'MM/dd/yyyy');
+    const formattedEndDate = format(endDate, 'MM/dd/yyyy');
+    
+    let baseUrl = `https://test.colloafrica.com/api/v1/admin/finance/mgr?start_date=${formattedStartDate}&end_date=${formattedEndDate}&perPage=${pagination.per_page}&page=${pagination.current_page}`;
+    
+    if (selectedStatus !== 'all') {
+      baseUrl += `&status=${selectedStatus}`;
+    }
+    
+    return baseUrl;
+  };
+
   useEffect(() => {
     const fetchMGRData = async () => {
       try {
+        setLoading(true);
         const token = localStorage.getItem('collo-admin-token');
         if (!token) {
           throw new Error('Authentication token not found');
@@ -122,19 +136,8 @@ const MGRTable: React.FC<MGRTableProps> = ({ startDate, endDate }) => {
         const myHeaders = new Headers();
         myHeaders.append("Authorization", `Bearer ${token}`);
 
-        const formattedStartDate = format(startDate, 'MM/dd/yyyy');
-        const formattedEndDate = format(endDate, 'MM/dd/yyyy');
-
-        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-        if (!apiBaseUrl) {
-          throw new Error('API base URL not configured');
-        }
-
-        let url = `${apiBaseUrl}/admin/finance/mgr?start_date=${formattedStartDate}&end_date=${formattedEndDate}&perPage=3&page=${pagination.current_page}`;
-        
-        if (selectedStatus !== 'all') {
-          url += `&status=${selectedStatus}`;
-        }
+        const url = buildApiUrl();
+        console.log('API URL:', url);
 
         const response = await fetch(url, {
           method: "GET",
@@ -147,14 +150,17 @@ const MGRTable: React.FC<MGRTableProps> = ({ startDate, endDate }) => {
         }
 
         const result: ApiResponse = await response.json();
-        setMgrData(result.message.data);
+        console.log('Server response:', result);
+
+        // Corrected data extraction from response
+        setMgrData(result.data?.data || []);
         setPagination({
-          current_page: result.message.current_page,
-          last_page: result.message.last_page,
-          per_page: result.message.per_page,
-          total: result.message.total,
-          from: result.message.from,
-          to: result.message.to
+          current_page: result.data?.current_page || 1,
+          last_page: result.data?.last_page || 1,
+          per_page: result.data?.per_page || 10,
+          total: result.data?.total || 0,
+          from: result.data?.from || 0,
+          to: result.data?.to || 0
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An unknown error occurred');
@@ -203,7 +209,6 @@ const MGRTable: React.FC<MGRTableProps> = ({ startDate, endDate }) => {
     { value: 'cancelled', label: 'Cancelled' },
     { value: 'pending', label: 'Pending' },
     { value: 'completed', label: 'Completed' },
-    { value: 'system_deactivated', label: 'System Deactivated' },
     { value: 'started', label: 'Started' }
   ];
 
@@ -211,6 +216,12 @@ const MGRTable: React.FC<MGRTableProps> = ({ startDate, endDate }) => {
     if (page >= 1 && page <= pagination.last_page) {
       setPagination(prev => ({ ...prev, current_page: page }));
     }
+  };
+
+  const handleStatusChange = (status: string) => {
+    setSelectedStatus(status);
+    // Reset to first page when changing status
+    setPagination(prev => ({ ...prev, current_page: 1 }));
   };
 
   const renderPagination = () => {
@@ -331,10 +342,7 @@ const MGRTable: React.FC<MGRTableProps> = ({ startDate, endDate }) => {
           id="status-filter"
           className="block w-60 p-3 border text-base border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
           value={selectedStatus}
-          onChange={(e) => {
-            setSelectedStatus(e.target.value);
-            setPagination(prev => ({ ...prev, current_page: 1 }));
-          }}
+          onChange={(e) => handleStatusChange(e.target.value)}
         >
           {statusOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -358,53 +366,65 @@ const MGRTable: React.FC<MGRTableProps> = ({ startDate, endDate }) => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {mgrData.map((mgr) => (
-              <tr key={mgr.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{mgr.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{mgr.duration}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{mgr.number_of_members}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {mgr.currency} {mgr.amount.toLocaleString()}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(mgr.status)} capitalize`}>
-                    {mgr.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button
-                    onClick={() => showModal(mgr)}
-                    className="text-[#470B96] hover:text-[#470B96]/85 cursor-pointer"
-                  >
-                    View Details
-                  </button>
+            {mgrData.length > 0 ? (
+              mgrData.map((mgr) => (
+                <tr key={mgr.id}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{mgr.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{mgr.duration}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{mgr.number_of_members}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {mgr.currency} {mgr.amount.toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(mgr.status)} capitalize`}>
+                      {mgr.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <button
+                      onClick={() => showModal(mgr)}
+                      className="text-[#470B96] hover:text-[#470B96]/85 cursor-pointer"
+                    >
+                      View Details
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500">
+                  No MGR data found for selected status and date range
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
 
       {/* Pagination */}
-      {renderPagination()}
+      {mgrData.length > 0 && renderPagination()}
 
       {/* MGR Details Modal */}
-      <MGRDetailsModal
-        visible={isModalVisible}
-        onCancel={handleCancel}
-        mgr={selectedMgr}
-        onGetCreatorDetails={(creator) => {
-          setCreator(creator);
-          setIsCreatorModalVisible(true);
-        }}
-      />
+      {selectedMgr && (
+        <MGRDetailsModal
+          visible={isModalVisible}
+          onCancel={handleCancel}
+          mgr={selectedMgr}
+          onGetCreatorDetails={(creator) => {
+            setCreator(creator);
+            setIsCreatorModalVisible(true);
+          }}
+        />
+      )}
 
       {/* Creator Details Modal */}
-      <CreatorDetailsModal
-        visible={isCreatorModalVisible}
-        onCancel={handleCreatorModalCancel}
-        creator={creator}
-      />
+      {creator && (
+        <CreatorDetailsModal
+          visible={isCreatorModalVisible}
+          onCancel={handleCreatorModalCancel}
+          creator={creator}
+        />
+      )}
     </div>
   );
 };
