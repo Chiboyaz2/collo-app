@@ -76,7 +76,7 @@ const MGRdata = () => {
   const formatCurrency = (value: string) => {
     return parseFloat(value).toLocaleString('en-US', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'NGN'
     });
   };
 
@@ -116,7 +116,7 @@ const MGRdata = () => {
           <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
             <h3 className="text-sm font-semibold text-gray-700 mb-2">Total Contributions</h3>
             <p className="text-xl font-bold text-purple-600">
-              {metadata ? formatCurrency(metadata.totalContributions) : '$0.00'}
+              {metadata ? formatCurrency(metadata.totalContributions) : '₦0.00'}
             </p>
             <p className="text-sm text-gray-500 mt-2">Sum of all contributions</p>
           </div>
@@ -125,7 +125,7 @@ const MGRdata = () => {
           <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
             <h3 className="text-sm font-semibold text-gray-700 mb-2">Total Allotments</h3>
             <p className="text-xl font-bold text-orange-600">
-              {metadata ? formatCurrency(metadata.totalAllotments) : '$0.00'}
+              {metadata ? formatCurrency(metadata.totalAllotments) : '₦0.00'}
             </p>
             <p className="text-sm text-gray-500 mt-2">Sum of all allotments</p>
           </div>
