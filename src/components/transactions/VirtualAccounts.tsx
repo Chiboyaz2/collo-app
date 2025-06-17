@@ -60,7 +60,7 @@ const VirtualAccounts: React.FC<VirtualAccountsProps> = ({ startDate, endDate })
 
   useEffect(() => {
     fetchAccounts();
-  }, [startDate, endDate, currentPage,]);
+  }, [startDate, endDate, currentPage]);
 
   const getAuthToken = () => {
     if (typeof window !== 'undefined') {
@@ -178,7 +178,7 @@ const VirtualAccounts: React.FC<VirtualAccountsProps> = ({ startDate, endDate })
         <button
           onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
           disabled={currentPage === 1}
-          className="px-4 py-2 bg-white text-gray-700 rounded-md border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+          className="px-4 py-2 bg-white text-gray-700 rounded-md border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center cursor-pointer"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -193,7 +193,7 @@ const VirtualAccounts: React.FC<VirtualAccountsProps> = ({ startDate, endDate })
         <button
           onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-white text-gray-700 rounded-md border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+          className="px-4 py-2 bg-white text-gray-700 rounded-md border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center cursor-pointer"
         >
           Next
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
@@ -205,7 +205,7 @@ const VirtualAccounts: React.FC<VirtualAccountsProps> = ({ startDate, endDate })
   };
 
   return (
-    <div className=" mt-4">
+    <div className="mt-4">
       <p className="text-gray-600 mb-6">
         Showing virtual accounts from {format(startDate, 'MMM d, yyyy')} to {format(endDate, 'MMM d, yyyy')}
       </p>
@@ -228,50 +228,71 @@ const VirtualAccounts: React.FC<VirtualAccountsProps> = ({ startDate, endDate })
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {accounts.map((account) => (
-                  <div key={account.id} className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow duration-300">
-                    <div className="p-6">
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-800">
-                            {account.account_first_name} {account.account_last_name}
-                          </h3>
-                          <p className="text-sm text-gray-500">{account.bank_name}</p>
-                        </div>
-                        <span className="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                          #{account.id}
-                        </span>
-                      </div>
-
-                      <div className="space-y-3 grid md:grid-cols-2">
-                        <div>
-                          <p className="text-sm text-gray-500">Account Number</p>
-                          <p className="font-medium">{account.account_number}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-500">Balance</p>
-                          <p className="font-bold text-lg text-purple-600">
-                            {parseFloat(account.account_balance).toLocaleString('en-US', {
-                              style: 'currency',
-                              currency: 'USD'
-                            })}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-500">Client</p>
-                          <p className="font-medium">{account.client}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-500">Created</p>
-                          <p className="font-medium">
+              <div className="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Account Holder
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Bank Details
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Balance
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Client
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Created
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {accounts.map((account) => (
+                        <tr key={account.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                              <div className="flex-shrink-0 h-10 w-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                <span className="text-purple-800 font-medium">
+                                  {account.account_first_name.charAt(0)}{account.account_last_name.charAt(0)}
+                                </span>
+                              </div>
+                              <div className="ml-4">
+                                <div className="text-sm font-medium text-gray-900">
+                                  {account.account_first_name} {account.account_last_name}
+                                </div>
+                                <div className="text-sm text-gray-500">
+                                  #{account.id}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900">{account.account_number}</div>
+                            <div className="text-sm text-gray-500">{account.bank_name}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className="font-bold text-purple-600">
+                              {parseFloat(account.account_balance).toLocaleString('en-US', {
+                                style: 'currency',
+                                currency: 'USD'
+                              })}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {account.client}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {format(new Date(account.created_at), 'MMM d, yyyy h:mm a')}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
 
               {renderPagination()}

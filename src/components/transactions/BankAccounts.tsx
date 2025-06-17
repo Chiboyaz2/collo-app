@@ -104,12 +104,112 @@ const BankAccounts: React.FC<BankAccountsProps> = ({ startDate, endDate }) => {
     setCurrentPage(page);
   };
 
+  const renderPagination = () => {
+    if (!pagination || pagination.total <= pagination.per_page) return null;
+
+    const pages = [];
+    const maxVisiblePages = 5;
+    const totalPages = pagination.last_page;
+
+    // Always show first page
+    pages.push(
+      <button
+        key={1}
+        onClick={() => handlePageChange(1)}
+        className={`px-3 py-1 rounded-md ${
+          currentPage === 1 ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+        }`}
+      >
+        1
+      </button>
+    );
+
+    // Calculate start and end pages
+    let startPage = Math.max(2, currentPage - Math.floor(maxVisiblePages / 2));
+    const endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 1);
+
+    // Adjust if we're at the end
+    if (endPage === totalPages - 1) {
+      startPage = Math.max(2, endPage - maxVisiblePages + 1);
+    }
+
+    // Add ellipsis if needed after first page
+    if (startPage > 2) {
+      pages.push(<span key="start-ellipsis" className="px-2 py-1">...</span>);
+    }
+
+    // Add middle pages
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`px-3 py-1 rounded-md ${
+            currentPage === i ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+          }`}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    // Add ellipsis if needed before last page
+    if (endPage < totalPages - 1) {
+      pages.push(<span key="end-ellipsis" className="px-2 py-1">...</span>);
+    }
+
+    // Always show last page if there's more than one page
+    if (totalPages > 1) {
+      pages.push(
+        <button
+          key={totalPages}
+          onClick={() => handlePageChange(totalPages)}
+          className={`px-3 py-1 rounded-md ${
+            currentPage === totalPages ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+          }`}
+        >
+          {totalPages}
+        </button>
+      );
+    }
+
+    return (
+      <div className="flex items-center justify-center space-x-2 mt-6">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-3 py-1 bg-white text-gray-700 rounded-md border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
+          Previous
+        </button>
+        
+        <div className="flex space-x-1">
+          {pages}
+        </div>
+        
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 bg-white text-gray-700 rounded-md border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+        >
+          Next
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+          </svg>
+        </button>
+      </div>
+    );
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
-  );
+    );
   }
 
   if (error) {
@@ -122,60 +222,63 @@ const BankAccounts: React.FC<BankAccountsProps> = ({ startDate, endDate }) => {
         Showing bank accounts data from {format(startDate, 'MMM d, yyyy')} to {format(endDate, 'MMM d, yyyy')}
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {bankAccounts.map((account) => (
-          <div key={account.id} className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
-            <div className="flex justify-between items-start mb-4">
-              <h3 className="text-lg font-semibold text-gray-800">{account.bank_name}</h3>
-              <span className={`px-2 py-1 text-xs rounded-full ${
-                account.provider_status === 'active' 
-                  ? 'bg-green-100 text-green-800' 
-                  : 'bg-red-100 text-red-800'
-              }`}>
-                {account.provider_status}
-              </span>
-            </div>
-
-            <div className="space-y-3">
-              <div>
-                <p className="text-sm text-gray-500">Account Holder</p>
-                <p className="font-medium">{account.holder_name}</p>
-              </div>
-
-              <div>
-                <p className="text-sm text-gray-500">Account Number</p>
-                <p className="font-mono font-medium">{account.account_number}</p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">Bank Code</p>
-                  <p>{account.bank_code}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Currency</p>
-                  <p>{account.currency}</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">Transfer Type</p>
-                  <p className="capitalize">{account.transfer_type}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Primary</p>
-                  <p>{account.primary ? 'Yes' : 'No'}</p>
-                </div>
-              </div>
-
-              <div className="pt-2 border-t border-gray-100">
-                <p className="text-sm text-gray-500">Created</p>
-                <p>{format(new Date(account.created_at), 'MMM d, yyyy')}</p>
-              </div>
-            </div>
-          </div>
-        ))}
+      <div className="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Bank Details
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Account Info
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Type
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Created
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {bankAccounts.map((account) => (
+                <tr key={account.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">{account.bank_name}</div>
+                    <div className="text-sm text-gray-500">Code: {account.bank_code}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">{account.holder_name}</div>
+                    <div className="text-sm text-gray-500 font-mono">{account.account_number}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      account.provider_status === 'active' 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-red-100 text-red-800'
+                    }`}>
+                      {account.provider_status}
+                    </span>
+                    <div className="text-xs mt-1 text-gray-500">
+                      {account.primary ? 'Primary account' : 'Secondary account'}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900 capitalize">{account.transfer_type}</div>
+                    <div className="text-sm text-gray-500">{account.currency}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {format(new Date(account.created_at), 'MMM d, yyyy')}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {bankAccounts.length === 0 && (
@@ -184,48 +287,7 @@ const BankAccounts: React.FC<BankAccountsProps> = ({ startDate, endDate }) => {
         </div>
       )}
 
-      {/* Pagination */}
-      {pagination && pagination.total > pagination.per_page && (
-        <div className="flex justify-center mt-8">
-          <nav className="inline-flex rounded-md shadow">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className={`px-3 py-1 rounded-l-md border border-gray-300 ${
-                currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-50 cursor-pointer'
-              }`}
-            >
-              Previous
-            </button>
-
-            {Array.from({ length: pagination.last_page }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                onClick={() => handlePageChange(page)}
-                className={`px-3 py-1 border-t border-b border-gray-300 ${
-                  page === currentPage
-                    ? 'bg-blue-50 text-blue-600 border-blue-500'
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                {page}
-              </button>
-            ))}
-
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === pagination.last_page}
-              className={`px-3 py-1 rounded-r-md border border-gray-300 ${
-                currentPage === pagination.last_page
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 cursor-pointer'
-              }`}
-            >
-              Next
-            </button>
-          </nav>
-        </div>
-      )}
+      {renderPagination()}
 
       {pagination && (
         <div className="text-center text-sm text-gray-500 mt-2">

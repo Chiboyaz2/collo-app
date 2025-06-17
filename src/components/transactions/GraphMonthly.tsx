@@ -204,18 +204,18 @@ const GraphMonthly: React.FC<GraphProps> = ({ startDate, endDate }) => {
                     {format(parse(item.month, 'yyyy-MM', new Date()), 'MMM yyyy')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">
-                    ${parseFloat(item.total_inflow).toLocaleString()}
+                  ₦ {parseFloat(item.total_inflow).toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">
-                    ${parseFloat(item.total_outflow).toLocaleString()}
+                  ₦ {parseFloat(item.total_outflow).toLocaleString()}
                   </td>
                   <td className={`px-6 py-4 whitespace-nowrap text-sm ${
                     parseFloat(item.net_flow) >= 0 ? 'text-green-600' : 'text-red-600'
                   }`}>
-                    ${parseFloat(item.net_flow).toLocaleString()}
+                    ₦ {parseFloat(item.net_flow).toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    ${parseFloat(item.total_flow).toLocaleString()}
+                  ₦ {parseFloat(item.total_flow).toLocaleString()}
                   </td>
                 </tr>
               ))}
