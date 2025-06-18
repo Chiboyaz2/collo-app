@@ -242,10 +242,10 @@ export default function DashboardLayout({
             </div>
 
             <div className="flex items-center space-x-3">
-              <div className="flex items-center">
-                <div className="h-9 w-9 rounded-full bg-[#470B96]/95 border-2 border-white shadow-sm flex items-center justify-center text-white font-medium">
+              <div  className="flex items-center">
+                <Link href='/dashboard/change-password' className="h-9 w-9 rounded-full bg-[#470B96]/95 border-2 border-white shadow-sm flex items-center justify-center text-white font-medium">
                   {adminData?.first_name?.[0] || 'A'}
-                </div>
+                </Link>
                 <div className="ml-2 hidden md:block">
                   <p className="text-sm font-medium text-gray-700">
                     {adminData?.first_name} {adminData?.last_name}
