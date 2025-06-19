@@ -19,6 +19,7 @@ type UserDetails = {
   bvn_verification_status: number;
   nin_verification_status: number;
   is_suspended: boolean;
+  created_at: string | null
 };
 
 type ModalProps = {
@@ -107,6 +108,16 @@ export default function UserModal({ userId, onClose }: ModalProps) {
     }
   };
 
+  function formatDate(dateString: string | null): string {
+    if (!dateString) return "N/A";
+    
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.toLocaleString('default', { month: 'long' });
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
+
   return (
     <div
       className="fixed inset-0 bg-black/70 bg-opacity-50 flex items-center justify-center z-50"
@@ -175,6 +186,10 @@ export default function UserModal({ userId, onClose }: ModalProps) {
               <div>
                 <p className="font-medium">NIN Status:</p>
                 <p>{userDetails.nin_verification_status === 1 ? "Verified" : "Not Verified"}</p>
+              </div>
+              <div>
+                <p className="font-medium">Created Date:</p>
+                <p>{formatDate(userDetails.created_at)}</p>
               </div>
             </div>
 
