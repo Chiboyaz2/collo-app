@@ -278,7 +278,7 @@ const VirtualAccounts: React.FC<VirtualAccountsProps> = ({ startDate, endDate })
                             <span className="font-bold text-purple-600">
                               {parseFloat(account.account_balance).toLocaleString('en-US', {
                                 style: 'currency',
-                                currency: 'USD'
+                                currency: 'NGN'
                               })}
                             </span>
                           </td>

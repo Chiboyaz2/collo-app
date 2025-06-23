@@ -35,7 +35,7 @@ interface LoginResponse {
   message: {
     token: string;
     admin: AdminData;
-  };
+  } | string | null;
   data: string;
 }
  
@@ -46,6 +46,7 @@ export default function LoginForm() {
     remember: false,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
@@ -61,13 +62,14 @@ export default function LoginForm() {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
+    setIsSuccess(false);
 
     try {
       console.log('Submitting form data:', formData);
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/login`, {
         method: 'POST',
-        mode: 'cors', // Explicitly request CORS mode
+        mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -77,32 +79,30 @@ export default function LoginForm() {
           password: formData.password,
           remember: formData.remember
         }),
-        credentials: 'include' // Include credentials if needed
+        credentials: 'include'
       });
-
-      // Check if the response is OK (status 200-299)
-      if (!response.ok) {
-        // Try to parse error message from response
-        const errorData = await response.json().catch(() => null);
-        throw new Error(
-          errorData?.message || 
-          errorData?.error || 
-          `HTTP error! status: ${response.status}`
-        );
-      }
 
       const result: LoginResponse = await response.json();
       console.log('Server response:', result);
 
-      if (result.status === 'success' && result.message.token) {
+      if (!response.ok) {
+        // Handle error response
+        const errorMessage = result.data || 'Invalid email or password';
+        throw new Error(errorMessage);
+      }
+
+      if (result.status === 'success' && typeof result.message === 'object' && result.message?.token) {
         // Store token and admin data in localStorage
         localStorage.setItem('collo-admin-token', result.message.token);
         localStorage.setItem('collo-admin-data', JSON.stringify(result.message.admin));
         
-        // On successful login, navigate to overview
+        // Set success state
+        setIsSuccess(true);
+        
+        // On successful login, navigate to dashboard
         router.push('/dashboard');
       } else {
-        throw new Error(result.message?.toString() || 'Invalid response format');
+        throw new Error(result.data || 'Invalid response format');
       }
     } catch (err) {
       console.error('Login error:', err);
@@ -209,9 +209,16 @@ export default function LoginForm() {
               </div>
             )}
 
+            {isSuccess && (
+              <div className="bg-green-50 text-green-600 p-3 rounded-lg flex items-start">
+                <Check size={18} className="mr-2 flex-shrink-0 mt-0.5" />
+                <span className="text-sm">Login successful! Redirecting...</span>
+              </div>
+            )}
+
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isSuccess}
               className="w-full bg-[#470B96] hover:bg-[#470B96]/85 text-white py-3 px-4 rounded-lg cursor-pointer flex items-center justify-center transition-colors duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
@@ -221,6 +228,14 @@ export default function LoginForm() {
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
                   Processing...
+                </span>
+              ) : isSuccess ? (
+                <span className="flex items-center">
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Redirecting...
                 </span>
               ) : (
                 <span className="flex items-center">
