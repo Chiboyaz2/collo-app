@@ -55,6 +55,8 @@ export default function UserTable({ currentPage, perPage, onPageChange }: UserTa
     lastPage: 1,
   });
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [activeSearchQuery, setActiveSearchQuery] = useState<string>("");
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   useEffect(() => {
@@ -68,16 +70,19 @@ export default function UserTable({ currentPage, perPage, onPageChange }: UserTa
 
       try {
         setLoading(true);
-        const response = await fetch(
-          `${API_BASE_URL}/admin/customer?page=${currentPage}&perPage=${perPage}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`,
-            },
-          }
-        );
+        let url = `${API_BASE_URL}/admin/customer?page=${currentPage}&perPage=${perPage}`;
+        
+        if (activeSearchQuery) {
+          url += `&search=${encodeURIComponent(activeSearchQuery)}`;
+        }
+
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -97,11 +102,29 @@ export default function UserTable({ currentPage, perPage, onPageChange }: UserTa
     };
 
     fetchUsers();
-  }, [currentPage, perPage, API_BASE_URL]);
+  }, [currentPage, perPage, API_BASE_URL, activeSearchQuery]);
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= pagination.lastPage) {
       onPageChange(newPage);
+    }
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setActiveSearchQuery(searchQuery);
+    // Reset to first page when searching
+    if (currentPage !== 1) {
+      onPageChange(1);
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    setActiveSearchQuery("");
+    // Reset to first page when clearing search
+    if (currentPage !== 1) {
+      onPageChange(1);
     }
   };
 
@@ -110,6 +133,52 @@ export default function UserTable({ currentPage, perPage, onPageChange }: UserTa
 
   return (
     <div className="bg-white p-6 rounded-lg shadow mt-4">
+      {/* Search Bar */}
+      <form onSubmit={handleSearch} className="mb-6">
+        <div className="relative max-w-md">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <svg
+              className="w-4 h-4 text-gray-500"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 20 20"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+              />
+            </svg>
+          </div>
+          <input
+            type="search"
+            id="default-search"
+            className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Search users by name or email..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {activeSearchQuery && (
+            <button
+              type="button"
+              onClick={handleClearSearch}
+              className="text-white cursor-pointer absolute right-20 bottom-1.5 bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-xs px-2 py-1"
+            >
+              Clear
+            </button>
+          )}
+          <button
+            type="submit"
+            className="text-white cursor-pointer absolute right-2.5 bottom-1.5 bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-xs px-3 py-1"
+          >
+            Search
+          </button>
+        </div>
+      </form>
+
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">

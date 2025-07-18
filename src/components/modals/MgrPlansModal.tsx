@@ -53,12 +53,6 @@ export default function MgrPlansModal({ userId, onClose }: MgrPlansModalProps) {
   const [loading, setLoading] = useState<boolean>(true);
   const [plans, setPlans] = useState<MgrPlan[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [startDate, setStartDate] = useState<string>(() => {
-    const date = new Date();
-    date.setMonth(date.getMonth() - 1);
-    return format(date, "yyyy-MM-dd");
-  });
-  const [endDate, setEndDate] = useState<string>(() => format(new Date(), "yyyy-MM-dd"));
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -75,8 +69,6 @@ export default function MgrPlansModal({ userId, onClose }: MgrPlansModalProps) {
 
       const url = new URL(`${API_BASE_URL}/admin/finance/mgr/users`);
       url.searchParams.append("userId", userId.toString());
-      url.searchParams.append("start_date", format(new Date(startDate), "MM/dd/yyyy"));
-      url.searchParams.append("end_date", format(new Date(endDate), "MM/dd/yyyy"));
       url.searchParams.append("perPage", "10");
 
       const response = await fetch(url.toString(), {
@@ -100,7 +92,7 @@ export default function MgrPlansModal({ userId, onClose }: MgrPlansModalProps) {
 
   useEffect(() => {
     fetchMgrPlans();
-  }, [userId, startDate, endDate]);
+  }, [userId]);
 
   const handleRefresh = () => {
     fetchMgrPlans();
@@ -133,28 +125,10 @@ export default function MgrPlansModal({ userId, onClose }: MgrPlansModalProps) {
 
         <h2 className="text-xl font-semibold mb-4">MGR Plans for User ID: {userId}</h2>
         
-        <div className="mb-6 flex flex-wrap gap-4 items-center">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="p-2 border rounded"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="p-2 border rounded"
-            />
-          </div>
+        <div className="mb-6">
           <button
             onClick={handleRefresh}
-            className="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Refresh
           </button>
@@ -165,13 +139,11 @@ export default function MgrPlansModal({ userId, onClose }: MgrPlansModalProps) {
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : plans.length > 0 ? (
-          <div className="overflow-x-auto ">
+          <div className="overflow-x-auto">
             <table className="min-w-full bg-white border rounded-lg">
               <thead className="bg-gray-50">
                 <tr>
-                  {/* <th className="py-3 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan ID</th> */}
                   <th className="py-3 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">MGR Name</th>
-                  {/* <th className="py-3 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">MGR ID</th> */}
                   <th className="py-3 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                   <th className="py-3 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                   <th className="py-3 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Join Date</th>
@@ -181,9 +153,7 @@ export default function MgrPlansModal({ userId, onClose }: MgrPlansModalProps) {
               <tbody className="divide-y divide-gray-200">
                 {plans.map((plan) => (
                   <tr key={plan.id} className="hover:bg-gray-50">
-                    {/* <td className="py-4 px-4 border-b text-sm text-gray-900">{plan.id}</td> */}
                     <td className="py-4 px-4 border-b text-sm text-gray-900">{plan.mgr?.name || "N/A"}</td>
-                    {/* <td className="py-4 px-4 border-b text-sm text-gray-900">{plan.mgr_id}</td> */}
                     <td className="py-4 px-4 border-b text-sm text-gray-900 capitalize">{plan.role}</td>
                     <td className="py-4 px-4 border-b text-sm text-gray-900">
                       <span className={`px-2 py-1 rounded-full text-xs ${
@@ -202,7 +172,7 @@ export default function MgrPlansModal({ userId, onClose }: MgrPlansModalProps) {
             </table>
           </div>
         ) : (
-          <p className="text-gray-500">No MGR plans found for this user in the selected date range.</p>
+          <p className="text-gray-500">No MGR plans found for this user.</p>
         )}
       </div>
     </div>

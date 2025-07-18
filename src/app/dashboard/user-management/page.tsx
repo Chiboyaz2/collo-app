@@ -6,7 +6,7 @@ import UserTable from "../../../components/user-management/UserTable";
 export default function UserManagementPage() {
   const [pagination, setPagination] = useState({
     currentPage: 1,
-    perPage: 5,
+    perPage: 100,
   });
 
   const handlePageChange = (newPage: number) => {

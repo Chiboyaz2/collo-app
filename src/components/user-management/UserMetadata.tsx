@@ -13,6 +13,7 @@ type UserMetadata = {
 export default function UserMetadata() {
   const [metadata, setMetadata] = useState<UserMetadata | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string | null>(null);
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -51,7 +52,7 @@ export default function UserMetadata() {
   }, [API_BASE_URL]);
 
   if (loading) return <div>Loading metadata...</div>;
-  if (error) return <div className="text-red-500">Error: {error}</div>;
+  // if (error) return <div className="text-red-500">Error: {error}</div>;
   if (!metadata) return null;
 
   return (
