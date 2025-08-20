@@ -17,6 +17,7 @@ import {
   LogOut, 
   Search,
   Menu,
+  Handshake,
   X
 } from 'lucide-react';
 import Logo from '../../../public/logo white.png'
@@ -85,7 +86,8 @@ export default function DashboardLayout({
   const navLinks = [
     ...baseNavLinks.slice(0, 1), // Overview
     ...(adminData?.admin_role_id === 1 ? [
-      { name: 'Staff', href: '/dashboard/staff', icon: Users }
+      { name: 'Staff', href: '/dashboard/staff', icon: Users },
+      { name: 'Reconciliation', href: '/dashboard/reconciliation', icon: Handshake }
     ] : []),
     ...baseNavLinks.slice(1) // Rest of the links
   ];

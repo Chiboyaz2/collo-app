@@ -6,13 +6,14 @@ import GetAccounts from '../../../components/transactions/GetAccounts';
 import GetMGR from '../../../components/transactions/GetMGR';
 import TransactionsGraph from '@/components/transactions/TransactionsGraph';
 
+
 type DefinedRange = {
   startDate: Date;
   endDate: Date;
   key: string;
 };
 
-type TabType = 'transactions' | 'account' | 'mgr';
+type TabType = 'transactions' | 'account' | 'mgr' | 'reconciliation';
 
 const STORAGE_KEY = 'collo-calendar-date-range';
 
@@ -176,12 +177,14 @@ export default function Transactions() {
           >
             MGR
           </button>
+          
         </div>
         
         <h2 className="text-xl font-semibold mb-4 text-gray-800">
           {activeTab === 'transactions' && ''}
           {activeTab === 'account' && ''}
           {activeTab === 'mgr' && ''}
+          {activeTab === 'reconciliation' && ''}
         </h2>
         
         {renderActiveTab()}

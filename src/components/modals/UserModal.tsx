@@ -3,6 +3,24 @@
 import { useEffect, useState } from "react";
 import MgrPlansModal from "./MgrPlansModal";
 import DefaultsModal from "./DefaultsModal";
+import ReconciliationModal from "./ReconciliationModal";
+
+type VirtualAccount = {
+  id: number;
+  user_id: number;
+  account_number: string;
+  account_first_name: string;
+  account_last_name: string;
+  bank_name: string;
+  account_balance: string;
+  account_id: string;
+  client: string;
+  client_id: string;
+  savings_product_name: string;
+  bvn: string;
+  created_at: string;
+  updated_at: string;
+};
 
 type UserDetails = {
   id: number;
@@ -19,7 +37,8 @@ type UserDetails = {
   bvn_verification_status: number;
   nin_verification_status: number;
   is_suspended: boolean;
-  created_at: string | null
+  created_at: string | null;
+  virtual_account: VirtualAccount | null;
 };
 
 type ModalProps = {
@@ -35,6 +54,7 @@ export default function UserModal({ userId, onClose }: ModalProps) {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [showMgrPlans, setShowMgrPlans] = useState<boolean>(false);
   const [showDefaults, setShowDefaults] = useState<boolean>(false);
+  const [showReconciliation, setShowReconciliation] = useState<boolean>(false);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -59,6 +79,7 @@ export default function UserModal({ userId, onClose }: ModalProps) {
 
         const data = await res.json();
         setUserDetails(data.message);
+        console.log("User details with virtual_account:", data.message);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch user details");
       } finally {
@@ -106,6 +127,10 @@ export default function UserModal({ userId, onClose }: ModalProps) {
     } finally {
       setActionLoading(false);
     }
+  };
+
+  const handleReconciliationSuccess = (message: string) => {
+    setSuccessMessage(message);
   };
 
   function formatDate(dateString: string | null): string {
@@ -188,6 +213,10 @@ export default function UserModal({ userId, onClose }: ModalProps) {
                 <p>{userDetails.nin_verification_status === 1 ? "Verified" : "Not Verified"}</p>
               </div>
               <div>
+                <p className="font-medium">Virtual Account:</p>
+                <p>{userDetails.virtual_account ? "Available" : "Not Available"}</p>
+              </div>
+              <div>
                 <p className="font-medium">Created Date:</p>
                 <p>{formatDate(userDetails.created_at)}</p>
               </div>
@@ -205,6 +234,12 @@ export default function UserModal({ userId, onClose }: ModalProps) {
                 className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded cursor-pointer"
               >
                 See Defaults
+              </button>
+              <button
+                onClick={() => setShowReconciliation(true)}
+                className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded cursor-pointer"
+              >
+                Reconciliation
               </button>
             </div>
           </div>
@@ -225,6 +260,15 @@ export default function UserModal({ userId, onClose }: ModalProps) {
         <DefaultsModal 
           userId={userId} 
           onClose={() => setShowDefaults(false)} 
+        />
+      )}
+      
+      {showReconciliation && userDetails && (
+        <ReconciliationModal 
+          userId={userId}
+          virtualAccount={userDetails.virtual_account} // Fix: Pass the value directly, not optional chaining
+          onClose={() => setShowReconciliation(false)}
+          onSuccess={handleReconciliationSuccess}
         />
       )}
     </div>
